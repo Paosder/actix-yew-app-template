@@ -1,0 +1,27 @@
+{
+  "name": "rust-webapp-template",
+  "version": "0.1.0",
+  "repository": "https://github.com/Paosder/wtt-was.git",
+  "author": "Paosder <denjaraos@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^6.2.0",
+    "copyfiles": "^2.4.1",
+    "rimraf": "^3.0.2",
+    "tailwindcss": "^2.1.4",
+    "tailwindcss-cli": "^0.1.2"
+  },
+  "scripts": {
+    "clean": "cargo clean",
+    "bootstrap": "cargo install cargo-watch trunk",
+    "dev:front": "trunk --config frontend/main/Trunk.toml watch",
+    "dev:css": "cargo watch -w ./frontend --no-ignore -s 'yarn build:css'",
+    "dev:server": "cargo watch --ignore frontend -x 'run --bin backend-main'",
+    "dev": "concurrently \"yarn dev:front\" \"yarn dev:css\" \"yarn dev:server\"",
+    "build:front": "trunk --config frontend/main/Trunk.toml build --release=true",
+    "build:css": "tailwindcss-cli build frontend/global.css -c frontend/tailwind.config.js -o build/assets/css/global.css",
+    "build:server": "cargo build -p backend-main --release",
+    "build:postprocess": "rimraf dist/* && copyfiles -u 1 'build/**/*' dist/build && copyfiles -f 'target/release/backend-main' dist",
+    "build": "yarn build:front && yarn build:css && yarn build:server && yarn build:postprocess"
+  }
+}
